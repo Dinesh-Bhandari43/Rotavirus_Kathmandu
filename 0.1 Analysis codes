@@ -95,7 +95,7 @@ cbmax_temp <-crossbasis(data$max_temp,lag=4,
 
 ### Modelling the effect##
 Model1 <- glm(Number_of_cases~cbmax_temp+time+harmonic(data$time,nfreq=6,
-      period=52)+bs(rainfall_sum, df=3)+ ns(mean_rh, df=3), data, family=poisson)
+      period=52)+ns(rainfall_sum, df=3)+ ns(mean_rh, df=3), data, family=poisson)
 summary(Model1)
 BIC(Model1)
 
