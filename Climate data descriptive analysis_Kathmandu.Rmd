@@ -1,0 +1,93 @@
+---
+title: "Climate data of Kathmandu descriptive statistics"
+author: "Dinesh Bhandari"
+date: "22 November 2018"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+
+library(readr)
+Kathmandu <- read_csv("Kathmandu.csv")
+data <- Kathmandu
+data <- data.frame(data)
+
+###preparing a date variable by combining, day, month and Year ###
+
+data$Date <- as.Date(paste(data$year,data$month,data$day, sep="-"))
+
+data$time <- seq(nrow(data))
+
+###Computation of mean temperature and mean relative humidity using daily maximum and daily minimum temperature and rh_12, rh_3 resp.##
+
+data$mean_temp <- (data$max_temp+data$min_temp)/2
+data$mean_rh <- (data$rh_12+data$rh_3)/2
+
+
+### Rearranging order of the variables###
+data <- data[,c(1:4,12,13,5:9,14,10:11,15)]
+
+
+
+
+```
+
+
+
+```{r data, echo=TRUE}
+##summary##
+summary(data)
+
+### Calculating Pearson's correlation matrix for all predictor variables"
+library(Hmisc)
+datacor <- rcorr(as.matrix(data[,10:15]))
+datacor$r
+datacor$P
+
+##Calculating Pearson's correlation coefficients for predictors except lag variables"
+cp <- cor(data[,10:15])
+
+## Visualising the correlaiton matrix ###
+library(corrplot)
+palette = colorRampPalette(c("blue", "green", "red")) (20)
+corrplot(cp, col = palette, method= "number")
+
+##Generating heatmap for the correlation plot##
+heatmap(x = cp, col = palette, symm = TRUE)
+```
+
+
+```{r plot, echo=FALSE}
+### Plotting the graph for temperature and humidity"
+oldpar <- par(no.readonly=TRUE)
+par(mex=0.8,mfrow=c(3,2))
+
+plot(data$Date,data$max_temp,pch=".", cex=1.5, col= "blue", main="Trend of daily maximum temperature  in Kathmandu district",
+     ylab="Temperature in Celsius",xlab="Date")
+abline(v=data$Date[grep("-01-01",data$Date)],col=grey(0.6),lty=2)
+
+plot(data$Date,data$min_temp,pch=".", cex=1.5, col= "red", main="Trend of daily minimum temperature in Kathmandu district",
+     ylab="Temperature in celsisu",xlab="Date")
+abline(v=data$Date[grep("-01-01",data$Date)],col=grey(0.6),lty=2)
+
+plot(data$Date,data$mean_temp,pch=".", cex=1.5, col= "green", main="Trend of daily mean temperature  in Kathmandu district",
+     ylab="Temperature in Celsius",xlab="Date")
+abline(v=data$Date[grep("-01-01",data$Date)],col=grey(0.6),lty=2)
+
+plot(data$Date,data$rh_12,pch=".", cex=1.5, col= "black", main="Trend of daily relative humidity measured at 12 hours (UTC) in Kathmandu district",
+     ylab="Relative humidity measured at 12_UTC",xlab="Date")
+abline(v=data$Date[grep("-01-01",data$Date)],col=grey(0.6),lty=2)
+
+plot(data$Date,data$rh_3,pch=".", cex=1.5, col= "brown", main="Trend of daily relative humidity meausred at 3 hours (UTC) in Kathmandu district",
+     ylab="Relative humidity measured at 3_UTC",xlab="Date")
+abline(v=data$Date[grep("-01-01",data$Date)],col=grey(0.6),lty=2)
+
+plot(data$Date,data$mean_rh,pch=".", cex=1.5, col= "cyan", main="Trend of mean daily relative humidity in Kathmandu district",
+     ylab="mean relative humidity",xlab="Date")
+abline(v=data$Date[grep("-01-01",data$Date)],col=grey(0.6),lty=2)
+
+```
+
