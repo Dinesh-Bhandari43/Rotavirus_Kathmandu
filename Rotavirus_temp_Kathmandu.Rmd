@@ -92,7 +92,7 @@ plot(data$time,data$rainfall_sum,pch=".", cex=5,type="o", col= "brown", main="Tr
 ### Defining crossbasis for temperature###
 
 cbmax_temp <-crossbasis(data$max_temp,lag=4, 
-                        argvar=list(fun="ns", df=3), arglag=list(fun="poly",degree=3))
+                        argvar=list(fun="ns", df=3), arglag=list(fun="ns",degree=3))
 
 ### Modelling the effect##
 Model1 <- glm(Number_of_cases~cbmax_temp+time+harmonic(data$time,nfreq=6,
